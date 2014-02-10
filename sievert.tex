@@ -1,86 +1,30 @@
-%\batchmode
-%\makeatletter
-%\def\input@path{{/Users/cpsievert/Dropbox/ISU/Research/RJournal-lyx//}}
-%\makeatother
-%\documentclass[a4paper]{report}\usepackage[]{graphicx}\usepackage[]{color}
-%%% maxwidth is the original width if it is less than linewidth
-%%% otherwise use linewidth (to make sure the graphics do not exceed the margin)
-%\makeatletter
-%\def\maxwidth{ %
-%  \ifdim\Gin@nat@width>\linewidth
-%    \linewidth
-%  \else
-%    \Gin@nat@width
-%  \fi
-%}
-%\makeatother
-%
-%
-%
-%
-%\usepackage[T1]{fontenc}
-%\usepackage[latin9]{inputenc}
-%\setcounter{secnumdepth}{3}
-%\setcounter{tocdepth}{3}
-%
-%\makeatletter
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Textclass specific LaTeX commands.
-%\usepackage{RJournal}
-%\usepackage[round]{natbib}
-%\bibliographystyle{abbrvnat}
-%\usepackage{booktabs}
-%
-%\fancyhf{}
-%\fancyhead[LO,RE]{\textsc{Contributed Article}}
-%\fancyhead[RO,LE]{\thepage}
-%\fancyfoot[L]{The R Journal Vol. X/Y, Month, Year}
-%\fancyfoot[R]{ISSN 2073-4859}
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% User specified LaTeX commands.
-%\usepackage[buttonsize=1em]{animate}
-%\newcommand{\proglang}[1]{\textsf{#1}}
-%\usepackage[english]{babel}
-%\usepackage{breakurl}
-%
-%\makeatother
-%\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
-%
-%\begin{document}
-
-
 \begin{article}
 
-
-
-
-
 \title{Taming PITCHf/x Data with \pkg{XML2R} and \pkg{pitchRx}}
-
-
 \author{by Carson Sievert}
 
 \maketitle
-\abstract{\CRANpkg{XML2R} is a framework that reduces the effort required to
-transform XML content into tables in a way that preserves parent to
-child relationships. \CRANpkg{pitchRx} applies \CRANpkg{XML2R}'s
-grammar for XML manipulation to Major League Baseball Advanced Media
-(MLBAM)'s Gameday data. With \CRANpkg{pitchRx}, one can easily obtain
-and store Gameday data in a remote database. The Gameday website hosts
-a wealth of XML data, but perhaps most interesting is PITCHf/x. Among
-other things, PITCHf/x data can be used to recreate a baseball's flight
-path from a pitcher's hand to home plate. With \CRANpkg{pitchRx},
-one can easily create animations and interactive 3D scatterplots of
-the baseball's flight path. PITCHf/x data is also commonly used to
-generate a static plot of baseball locations at the moment they cross
-home plate. These plots, sometimes called \dfn{strike-zone plots},
-can also refer to a plot of event probabilities over the same region.
-\CRANpkg{pitchRx} provides an easy and robust way to generate strike-zone
-plots using the \CRANpkg{ggplot2} package. }
-
+\abstract{This paper provides an overview of two R packages
+  -- \pkg{XML2R} and \pkg{pitchRx}. \pkg{XML2R} is a
+  framework that reduces the effort required to transform XML content
+  into tabular data structures in a way that preserves parent to child
+  relationships. \pkg{pitchRx} applies \pkg{XML2R}'s grammar
+  for XML data manipulation to Major League Baseball Advanced Media
+  (MLBAM)'s Gameday data. With \pkg{pitchRx}, one can easily obtain
+  Gameday data (as well as store it in a remote database). The Gameday
+  website hosts a wealth of data in XML format, but perhaps most
+  interesting is PITCHf/x data. Among other things, PITCHf/x data can be
+  used to recreate a baseball's flight path from a pitcher's hand to
+  home plate. With \pkg{pitchRx}, one can easily create animations
+  and interactive 3D scatterplots of the baseball's flight
+  path. PITCHf/x data is also commonly used to generate a static plot
+  of baseball locations at the moment they cross home plate. These
+  plots, sometimes called \dfn{strike-zone plots}, can also refer to a
+  plot of event probabilities over the same region. \pkg{pitchRx}
+  provides an easy and robust way to generate strike-zone plots using
+  the \pkg{ggplot2} package. }
 
 \section{Introduction}
-
-
 \subsection{What is PITCHf/x?}
 
 PITCHf/x is a general term for a system of cameras which tracks the
@@ -90,209 +34,215 @@ define a baseball's flight path from a pitcher's hand to home plate.%
 stands besides home plate and tries to hit the ball into the field
 of play.%
 } A best fitting parametric curve is fit to these measurements under
-the assumption of constant acceleration \citet{patent}. There are
-studies that suggest that this assumption is quite reasonable - especially
-for non-knuckleballs \citet{trajecoryAnalysis}. In other words, the
+the assumption of constant acceleration \citep{patent}. There are
+studies that suggest that this assumption is quite reasonable -- especially
+for non-knuckleballs \citep{trajecoryAnalysis}. In other words, the
 smoothed flight paths are often a reasonable approximation (within
-a couple inches) of the real path. The parameters used to fit this
+a couple of inches) of the real path. The parameters used to fit this
 curve are made available in XML format on a publicly accessible website.
 This website, maintained by MLBAM, also hosts a wealth of other baseball
 related data used to inform MLB's Gameday webcast in near real time.
-
 
 \subsection{Why is PITCHf/x important?}
 
 On the business side of baseball, using statistical analysis to scout
 and evaluate players has become mainstream. When PITCHf/x was first
-introduced, \citep{slate} proclaimed it as, \begin{quote} "The new technology that will change statistical analysis [of baseball] forever." \end{quote}
+introduced, \citet{slate} proclaimed it as, \begin{quote} ``The new
+  technology that will change statistical analysis [of baseball]
+  forever.'' \end{quote}
 PITCHf/x has yet to fully deliver this claim, partially due to the
 difficulty in accessing and deriving insight from the large amount
 of complex information. By providing better tools to collect and visualize
-this data, \pkg{pitchRx} makes PITCHf/x analysis more accessible
+this data, \CRANpkg{pitchRx} makes PITCHf/x analysis more accessible
 to the general public.
-
 
 \subsection{PITCHf/x applications}
 
 PITCHf/x data is and can be used for many different projects. It can
 also complement other baseball data sources, which poses an interesting
-database management problem. Statistical analysis of PITCHf/x and
+database management problem. Statistical analysis of PITCHf/x data and
 baseball data in general has become so popular that it has helped
 expose statistical ideas and practice to the general public. If you
 have witnessed television broadcasts of MLB games, you know one obvious
-application of PITCHf/x is locating pitches in the strike-zone as
+application of PITCHf/x data is locating pitches in the strike-zone as
 well as recreating flight trajectories, tracking pitch speed, etc.
 Some well-known and statistically intriguing problems related to PITCHf/x
 include: classifying pitch types, predicting pitch sequences, and
-clustering pitchers with similar tendencies \citet{curve}.
+clustering pitchers with similar tendencies \citep{curve}.
 
 
-\subsection{Contributions of \pkg{pitchRx} and \pkg{XML2R}}
+\subsection[Contributions of pitchRx and XML2R]{Contributions of \pkg{pitchRx} and \pkg{XML2R}}
 
-\pkg{pitchRx} has two main focuses \citet{pitchRx}. The first focus
-is to provide easy access to Gameday data. Not only is \pkg{pitchRx}
-helpful for collecting this data in bulk, but it has served as a helpful
-teaching and research aide (\href{http://baseballwithr.wordpress.com/}{baseballwithr.wordpress.com}
+\pkg{pitchRx} has two main focuses \citep{pitchRx}. The first focus is
+to provide easy access to Gameday data. Not only is \pkg{pitchRx}
+helpful for collecting this data in bulk, but it has served as a
+helpful teaching and research aide
+(\href{http://baseballwithr.wordpress.com/}{baseballwithr.wordpress.com}
 is one such example). Methods for collecting Gameday data existed
-prior to \pkg{pitchRx}; however, these methods are not easily extensible
-and require juggling technologies that may not be familiar or accessible
-\citet{database}. Moreover, these working environments are less desirable
-than \proglang{R} for data analysis and visualization. Since \pkg{pitchRx}
-is built upon \pkg{XML2R}'s united framework, it can be easily modified
-and/or extended \citet{XML2R}. For this same reason, \pkg{pitchRx}
-serves as a model for building XML data collection tools with \pkg{XML2R}.
+prior to \pkg{pitchRx}; however, these methods are not easily
+extensible and require juggling technologies that may not be familiar
+or accessible \citep{database}. Moreover, these working environments
+are less desirable than R for data analysis and
+visualization. Since \pkg{pitchRx} is built upon \CRANpkg{XML2R}'s
+united framework, it can be easily modified and/or extended
+\citep{XML2R}. For this same reason, \pkg{pitchRx} serves as a model
+for building XML data collection tools with \pkg{XML2R}.
 
 The other main focus of \pkg{pitchRx} is to simplify the process
 creating popular PITCHf/x graphics. Strike-zone plots and animations
-made via \pkg{pitchRx} utilize the extensible \pkg{ggplot2} framework
-as well as various customized options \citet{ggplot2}. \pkg{ggplot2}
+made via \pkg{pitchRx} utilize the extensible \CRANpkg{ggplot2} framework
+as well as various customized options \citep{ggplot2}. \pkg{ggplot2}
 is a convenient framework for generating strike-zone plots primarily
 because of its facetting schema which allows one to make visual comparisons
 across any combination of discrete variable(s). Interactive 3D scatterplots
-are based on the \pkg{rgl} package and useful for gaining a new perspective
+are based on the \CRANpkg{rgl} package and useful for gaining a new perspective
 on flight trajectories.
-
 
 \section{Getting familiar with Gameday}
 
-Gameday data is hosted and made available for free thanks to MLBAM
-via \url{http://gd2.mlb.com/components/game/mlb/}.%
-\footnote{Please be respectful of this service and store any information after
-you extract it instead of repeatedly querying the website. Before
-using any content from this website, please also read the \href{http://gdx.mlb.com/components/copyright.txt}{copyright} %
-} From this website, one can obtain many different types of data besides
-PITCHf/x. For example, one can obtain everything from \href{http://gd2.mlb.com/components/game/mlb/year_2013/month_07/day_16/gid_2013_07_16_aasmlb_nasmlb_1/media/instadium.xml}{structured media metadata}
-to \href{http://gd2.mlb.com/components/game/mlb/twitter/anaInsiderTweets.xml}{insider tweets}.
-In fact, this website's purpose is to serve data to various \href{http://mlb.com}{mlb.com}
-web pages and applications. As a result, some data is redundant and
-the format may not be optimal for statistical analysis. For these
-reasons, \code{scrape} is focused on retrieving data that is useful
-for PITCHf/x analysis and providing it in a convenient format for
-data analysis. 
+Gameday data is hosted and made available for free thanks to MLBAM via
+\href{http://gd2.mlb.com/components/game/mlb/}.%
+\footnote{Please be respectful of this service and store any
+  information after you extract it instead of repeatedly querying the
+  website. Before using any content from this website, please also
+  read the
+  \href{http://gdx.mlb.com/components/copyright.txt}{copyright}. %
+} From this website, one can obtain many different types of data
+besides PITCHf/x. For example, one can obtain everything from
+\href{http://gd2.mlb.com/components/game/mlb/year_2013/month_07/day_16/gid_2013_07_16_aasmlb_nasmlb_1/media/instadium.xml}{structured
+  media metadata} to
+\href{http://gd2.mlb.com/components/game/mlb/twitter/anaInsiderTweets.xml}{insider
+  tweets}.  In fact, this website's purpose is to serve data to
+various \href{http://mlb.com}{mlb.com} web pages and applications. As a
+result, some data is redundant and the format may not be optimal for
+statistical analysis. For these reasons, function \code{scrape} is
+focused on retrieving data that is useful for PITCHf/x analysis and
+providing it in a convenient format for data analysis.
 
 Nativigating through the MLBAM website can be overwhelming, but it
 helps to recognize that a homepage exists for nearly every day and
-every game. For example, \url{http://gd2.mlb.com/components/game/mlb/year_2011/month_02/day_26/}
+every game. For example,
+\href{http://gd2.mlb.com/components/game/mlb/year_2011/month_02/day_26/}
 displays numerous hyperlinks to various files specific to February
-26th, 2011. On this page is a hyperlink to a \href{http://gd2.mlb.com/components/game/mlb/year_2011/month_02/day_26/miniscoreboard.xml}{miniscoreboard.xml}
+26th, 2011. On this page is a hyperlink to a
+\href{http://gd2.mlb.com/components/game/mlb/year_2011/month_02/day_26/miniscoreboard.xml}{miniscoreboard.xml}
 file which contains information on every game played on that date.
 This page also has numerous hyperlinks to game specific homepages.
-For example, \href{http://gd2.mlb.com/components/game/mlb/year_2011/month_02/day_26/gid_2011_02_26_phimlb_nyamlb_1/}{gid\_2011\_02\_26\_phimlb\_nyamlb\_1/}
-points to the homepage for that day's game between the NY Yankees
-and Philadelphia Phillies. On this page is a hyperlink to the \href{http://gd2.mlb.com/components/game/mlb/year_2011/month_02/day_26/gid_2011_02_26_phimlb_nyamlb_1/players.xml}{players.xml}
-file which contains information about the players, umpires, and coaches
-(positions, names, batting average, etc.) coming into that game. 
+For example,
+\href{http://gd2.mlb.com/components/game/mlb/year_2011/month_02/day_26/gid_2011_02_26_phimlb_nyamlb_1/}{gid\_2011\_02\_26\_phimlb\_nyamlb\_1/}
+points to the homepage for that day's game between the NY Yankees and
+Philadelphia Phillies. On this page is a hyperlink to the
+\href{http://gd2.mlb.com/components/game/mlb/year_2011/month_02/day_26/gid_2011_02_26_phimlb_nyamlb_1/players.xml}{players.xml}
+file which contains information about the players, umpires, and
+coaches (positions, names, batting average, etc.) coming into that
+game.
 
-Starting from a particular game's homepage and clicking on the \href{http://gd2.mlb.com/components/game/mlb/year_2011/month_02/day_26/gid_2011_02_26_phimlb_nyamlb_1/inning/}{inning/}
-directory, we \emph{should} see another page with links to the \href{http://gd2.mlb.com/components/game/mlb/year_2011/month_02/day_26/gid_2011_02_26_phimlb_nyamlb_1/inning/inning_all.xml}{inning\_all.xml}
-file and the \href{http://gd2.mlb.com/components/game/mlb/year_2011/month_02/day_26/gid_2011_02_26_phimlb_nyamlb_1/inning/inning_hit.xml}{inning\_hit.xml}
-file. If it is available, the inning\_all.xml file contains the PITCHf/x
-data for that game. It's important to note that this file won't exist
-for some games, because some games are played in venues that do not
-have a working PITCHf/x system in place. This is especially true for
-preseason games and games played prior to the 2008 season when the
-PITCHf/x system became widely adopted.%
-\footnote{In this case, \code{scrape} will print ``failed to load HTTP resource''
-in the \proglang{R} console (after the relevant file name) to indicate
-that no data was available.%
-} The inning\_hit.xml files have manually recorded spatial coordinates
+Starting from a particular game's homepage and clicking on the
+\href{http://gd2.mlb.com/components/game/mlb/year_2011/month_02/day_26/gid_2011_02_26_phimlb_nyamlb_1/inning/}{inning/}
+directory, we \emph{should} see another page with links to the
+\href{http://gd2.mlb.com/components/game/mlb/year_2011/month_02/day_26/gid_2011_02_26_phimlb_nyamlb_1/inning/inning_all.xml}{inning\_all.xml}
+file and the
+\href{http://gd2.mlb.com/components/game/mlb/year_2011/month_02/day_26/gid_2011_02_26_phimlb_nyamlb_1/inning/inning_hit.xml}{inning\_hit.xml}
+file. If it is available, the \code{inning\_hit.xml} file contains the
+PITCHf/x data for that game. It is important to note that this file
+will not exist for some games, because some games are played in venues
+that do not have a working PITCHf/x system in place. This is
+especially true for preseason games and games played prior to the 2008
+season when the PITCHf/x system became widely adopted.%
+\footnote{In this case, \code{scrape} will print ``failed to load HTTP
+  resource'' in the R console (after the relevant file name) to
+  indicate that no data was available.%
+} The \code{inning\_hit.xml} files have manually recorded spatial coordinates
 of where a home run landed or where the baseball made initial contact
-with a defender after it was hit into play. 
+with a defender after it was hit into play.
 
 The relationship between these XML files and the tables returned by
-\code{scrape} is presented in table \ref{table:pitchfx}. The \code{pitch}
-table is extracted from file(s) whose name ends in inning\_all.xml.
-This is the only table returned by \code{scrape} that contains data
-on the pitch-by-pitch level. The \code{atbat}, \code{runner}, \code{action}
-and \code{hip} tables from this same file are commonly labeled somewhat
-ambiguously as play-by-play data. The \code{player}, \code{coach},
-and \code{umpire} tables are extracted from players.xml and are classified
-as game-by-game since there is one record per person per game. Figure
+\code{scrape} is presented in Table~\ref{table:pitchfx}. The
+\code{pitch} table is extracted from files whose names end in
+\code{inning\_all.xml}.  This is the only table returned by
+\code{scrape} that contains data on the pitch-by-pitch level. The
+\code{atbat}, \code{runner}, \code{action} and \code{hip} tables from
+this same file are commonly labeled somewhat ambiguously as
+play-by-play data. The \code{player}, \code{coach}, and \code{umpire}
+tables are extracted from \code{players.xml} and are classified as
+game-by-game since there is one record per person per game. Figure
 \ref{fig:relations} shows how these tables can be connected to one
-another in a database setting. The direction of the arrows represent
-a one to possibly many relationship. For example, at least one pitch
-is thrown for each \dfn{at bat} (that is, each bout between pitcher
-and batter) and there are numerous at bats within each game. 
+another in a database setting. The direction of the arrows represent a
+one to possibly many relationship. For example, at least one pitch is
+thrown for each \dfn{at bat} (that is, each bout between pitcher and
+batter) and there are numerous at bats within each game.
 
-In a rough sense, one can relate tables returned by \code{scrape}
-back to XML nodes in the XML files. For convenience, some information
-in certain XML nodes are combined into one table. For example, information
-gleaned from the 'top', 'bottom', and 'inning' XML nodes within inning\_all.xml
-are included as \code{inning} and \code{inning\_side} fields in
-the \code{pitch}, \code{po}, \code{atbat}, \code{runner}, and
-\code{action} tables. This helps reduce the burden of merging many
-tables together in order to have inning information on the play-by-play
-and/or pitch-by-pitch level. Other information is simply ignored simply
-because it is redundant. For example, the 'game' node within the players.xml
+In a rough sense, one can relate tables returned by \code{scrape} back
+to XML nodes in the XML files. For convenience, some information in
+certain XML nodes are combined into one table. For example,
+information gleaned from the `top', `bottom', and `inning' XML nodes
+within \code{inning\_all.xml} are included as \code{inning} and
+\code{inning\_side} fields in the \code{pitch}, \code{po},
+\code{atbat}, \code{runner}, and \code{action} tables. This helps
+reduce the burden of merging many tables together in order to have
+inning information on the play-by-play and/or pitch-by-pitch
+level. Other information is simply ignored simply because it is
+redundant. For example, the `game' node within the \code{players.xml}
 file contains information that can be recovered from the \code{game}
-table extracted from the miniscoreboard.xml file. If the reader wants
-a more detailed explanation of fields in these tables, \citet{baseball}
-provide nice overview. 
+table extracted from the \code{miniscoreboard.xml} file. If the reader
+wants a more detailed explanation of fields in these tables,
+\citet{baseball} provide a nice overview.
 
-\begin{table}[htbp]   
-	\centering   
-	\begin{tabular}{*{4}{l}}     
-		\toprule
-\textbf{\begin{tabular}[c]{@{}c@{}} Source file \\ suffix \end{tabular}} & 
-\textbf{\begin{tabular}[c]{@{}c@{}} Information \\ level \end{tabular}} &
-\textbf{XML nodes} &
+\begin{widetable}[ht] 
+\centering % used for centering table 
+\begin{tabular}{cccc} 
+\toprule
+\textbf{\begin{tabular}[c]{@{}c@{}} Source file \\ suffix \end{tabular}}                   & 
+\textbf{\begin{tabular}[c]{@{}c@{}} Information \\ level \end{tabular}}                    & 
+\textbf{XML nodes}                                                                         & 
 \textbf{\begin{tabular}[c]{@{}c@{}} Tables returned\\ by \code{scrape} \end{tabular}} \\ 
-  	\midrule     
-miniscoreboard.xml & game-by-game  & \begin{tabular}[l]{@{}lll@{}} games, game, \\ game\_media, media \end{tabular}  & game, media   \\ 
-	\midrule 
-players.xml & game-by-game & \begin{tabular}[l]{@{}lll@{}} game, team, player, \\ coach, umpire \end{tabular}  & 
-\begin{tabular}[l]{@{}lll@{}} player, coach, \\ umpire \end{tabular}            \\ 
-	\midrule 
-inning\_all.xml & \begin{tabular}[l]{@{}lll@{}} play-by-play, \\ pitch-by-pitch  \end{tabular}  & 
-\begin{tabular}[l]{@{}lll@{}} game, inning, bottom, top, \\ atbat, po, pitch, runner, action \end{tabular} & 
-\begin{tabular}[l]{@{}lll@{}} atbat, po, pitch, \\ runner, action \end{tabular}    \\ 
-	\midrule 
-inning\_hit.xml & play-by-play  & hitchart, hip  & hip     \\   
-		\bottomrule   
-	\end{tabular} 
-	\caption{Structure of PITCHf/x and related Gameday data sources accessible to \code{scrape}}
-	\label{table:pitchfx} 
-\end{table}
+\midrule
+\code{miniscoreboard.xml} & game-by-game  & \begin{tabular}[c]{@{}c@{}} games, game, \\ game\_media, media \end{tabular}  & game, media   \\[12pt] 
+\code{players.xml} & game-by-game & \begin{tabular}[c]{@{}c@{}} game, team, player, \\ coach, umpire \end{tabular}  & 
+\begin{tabular}[c]{@{}c@{}} player, coach, \\ umpire \end{tabular}            \\[12pt]
+\code{inning\_all.xml} & \begin{tabular}[c]{@{}c@{}} play-by-play, \\ pitch-by-pitch  \end{tabular}  & 
+\begin{tabular}[c]{@{}c@{}} game, inning, bottom, top, \\ atbat, po, pitch, runner,\\ action \end{tabular} & 
+\begin{tabular}[c]{@{}c@{}} atbat, po, pitch, \\ runner, action \end{tabular}    \\[18pt]
+\code{inning\_hit.xml} & play-by-play  & hitchart, hip  & hip     \\
+\bottomrule
+\end{tabular}
+\caption{Structure of PITCHf/x and related Gameday data sources accessible to \code{scrape}.} 
+\label{table:pitchfx} 
+\end{widetable}
 
 \begin{figure}
-\centerline{\includegraphics[scale=0.75]{Drawing1.png}}
-
+\centerline{\includegraphics[scale = 0.75]{Drawing1.png}}
 \caption{Table relations between Gameday data accessible via \code{scrape}.
-Direction of arrows indicate a one to possibly many relationship.
+The directions of the arrows indicate a one to possibly many relationship.
 \label{fig:relations}}
-
-
 \end{figure}
 
+\section[Introducing XML2R]{Introducing \pkg{XML2R}}
 
-
-\section{Introducing \pkg{XML2R}}
-
-The \proglang{R} package \pkg{XML2R} significantly reduces the amount
+The R package \pkg{XML2R} significantly reduces the amount
 of coding and cognitive effort required to extract and manipulate
 XML content. It was designed specifically for XML content with a relational
 structure in mind. That does not imply the XML content has to be relational
 in order for \pkg{XML2R} to be useful, but the package conventions
 are better suited for that case. This section shows how the scraping
 functionality of \pkg{pitchRx} uses ideas and tools from \pkg{XML2R}
-to produce a collection of tables from inning\_all.xml files. A similar
+to produce a collection of tables from \code{inning\_all.xml} files. A similar
 approach is used by \code{pitchRx::scrape} to construct tables from
-the other Gameday files in table \ref{table:pitchfx}. In fact, \pkg{XML2R}
-has also been implemented in the \proglang{R} package \href{https://github.com/cpsievert/bbscrapeR}{bbscrapeR}
+the other Gameday files in Table~\ref{table:pitchfx}. In fact, \pkg{XML2R}
+has also been used in the R package \href{https://github.com/cpsievert/bbscrapeR}{bbscrapeR}
 which collects data from \href{http://nba.com}{nba.com} and \href{http://wnba.com}{wnba.com}.
-
 
 \subsection{Constructing file names}
 
 Perhaps the most frustrating part of obtaining data in bulk off of
-the web is finding the proper collection of urls or file names of
+the web is finding the proper collection of URLs or file names of
 interest. Since files on the Gameday website are fairly well organized,
 the \code{makeUrls} function can be used to construct \code{urls}
 that point to every game's homepage within a window of dates.
-
+%
 \begin{Schunk}
 \begin{Sinput}
-urls <- makeUrls(start="2011-06-01", end="2011-06-01") 
+urls <- makeUrls(start = "2011-06-01", end = "2011-06-01") 
 sub("http://gd2.mlb.com/components/game/mlb/", "", head(urls))
 \end{Sinput}
 \begin{Soutput}
@@ -305,8 +255,6 @@ sub("http://gd2.mlb.com/components/game/mlb/", "", head(urls))
 \end{Soutput}
 \end{Schunk}
 
-
-
 \subsection{Extracting observations}
 
 Once we have a collection of \code{files}, the next step is to parse
@@ -316,12 +264,12 @@ The columns are comprised of XML attributes and the XML value for
 a particular XML lineage. The name of each list element (or each observation)
 tracks the XML hierarchy so observations can be grouped together in
 a sensible fashion at a later point.
-
+%
 \begin{Schunk}
 \begin{Sinput}
 library(XML2R)
 files <- paste0(urls, "/inning/inning_all.xml")
-obs <- XML2Obs(files, url.map=TRUE, quiet=TRUE) 
+obs <- XML2Obs(files, url.map = TRUE, quiet = TRUE) 
 table(names(obs))
 \end{Sinput}
 \begin{Soutput}
@@ -342,16 +290,15 @@ game//inning//bottom//atbat//runner           game//inning//top//action
                                   1 
 \end{Soutput}
 \end{Schunk}
-
-
+%
 This output tells us that 1978
 pitches were thrown in the bottom inning and 2183
 were thrown in the top inning on June 1st, 2011. Also, there are 12
 different levels of observations. The list element named \code{url\_map}
-is not considered an observation and was included since \code{url.map=TRUE}.
+is not considered an observation and was included since \code{url.map = TRUE}.
 This helps avoid repeating long file names in the \code{url\_key}
 column which tracks the mapping between observations and file names. 
-
+%
 \begin{Schunk}
 \begin{Sinput}
 obs[c(1, 2500)]
@@ -375,33 +322,31 @@ $`game//inning//bottom//atbat//runner`
 \end{Soutput}
 \end{Schunk}
 
-
-
 \subsection{Renaming observations}
 
-Before grouping observations into a collection tables based on their
-names, one may want to \code{re\_name} observations. Observations
-named \code{'game//inning//bottom//atbat'} and \code{'game//inning//top//atbat'}
-should be included the same table since they share XML attributes
-(in other words, the observations share variables). 
-
+Before grouping observations into a collection of tables based on
+their names, one may want to \code{re\_name} them. Observations with names
+\code{'game//inning//bottom//atbat'} and
+\code{'game//inning//top//atbat'} should be included in the same table
+since they share XML attributes (in other words, the observations
+share variables).
+%
 \begin{Schunk}
 \begin{Sinput}
-tmp <- re_name(obs, equiv=c("game//inning//top//atbat",                             
-			"game//inning//bottom//atbat"), diff.name="inning_side") 
+tmp <- re_name(obs, equiv = c("game//inning//top//atbat", 
+  "game//inning//bottom//atbat"), diff.name = "inning_side") 
 \end{Sinput}
 \end{Schunk}
-
-
+%
 By passing these names to the \code{equiv} argument, \code{re\_name}
 determines the difference in the naming scheme and suppresses that
-difference. In other words, observations names that match the \code{equiv}
+difference. In other words, observation names that match the \code{equiv}
 argument will be renamed to \code{'game//inning//atbat'}. The information
 removed from the name is not lost; however, as a new column is appended
 to the end of each relevant observation. For example, notice how the
 \code{inning\_side} column contains the part of the name we just
 removed:
-
+%
 \begin{Schunk}
 \begin{Sinput}
 tmp[grep("game//inning//atbat", names(tmp))][1:2]
@@ -426,25 +371,20 @@ $`game//inning//atbat`
 [1,] "url1"  "top"      
 \end{Soutput}
 \end{Schunk}
-
-
+%
 For similar reasons, other observation name pairs are renamed in a
 similar fashion.
-
+%
 \begin{Schunk}
 \begin{Sinput}
-tmp <- re_name(tmp, equiv=c("game//inning//top//atbat//runner",                             
-			"game//inning//bottom//atbat//runner"), 
-		diff.name="inning_side")
-tmp <- re_name(tmp, equiv=c("game//inning//top//action",                             
-			"game//inning//bottom//action"), 
-		diff.name="inning_side")  
-tmp <- re_name(tmp, equiv=c("game//inning//top//atbat//po",                            
-			"game//inning//bottom//atbat//po"), 
-		diff.name="inning_side")
-obs2 <- re_name(tmp, equiv=c("game//inning//top//atbat//pitch",                             
-			"game//inning//bottom//atbat//pitch"), 
-		diff.name="inning_side") 
+tmp <- re_name(tmp, equiv = c("game//inning//top//atbat//runner",                             
+  "game//inning//bottom//atbat//runner"), diff.name = "inning_side")
+tmp <- re_name(tmp, equiv = c("game//inning//top//action",                             
+  "game//inning//bottom//action"), diff.name = "inning_side")  
+tmp <- re_name(tmp, equiv = c("game//inning//top//atbat//po",                            
+  "game//inning//bottom//atbat//po"), diff.name = "inning_side")
+obs2 <- re_name(tmp, equiv = c("game//inning//top//atbat//pitch",                             
+  "game//inning//bottom//atbat//pitch"), diff.name = "inning_side") 
 table(names(obs2))
 \end{Sinput}
 \begin{Soutput}
@@ -460,14 +400,12 @@ game//inning//atbat//runner                     url_map
 \end{Soutput}
 \end{Schunk}
 
-
-
 \subsection{Linking observations}
 
 After all that renaming, we now have 7
 different levels of observations. Let's examine observations on the
 \code{game//inning} level:
-
+%
 \begin{Schunk}
 \begin{Sinput}
 obs2[grep("^game//inning$", names(obs2))][1:3] 
@@ -486,18 +424,17 @@ $`game//inning`
 [1,] "3" "ana"     "kca"     "Y"  "url1" 
 \end{Soutput}
 \end{Schunk}
-
-
-Before we grouping observations into tables, it is important preserve
+%
+Before we group observations into tables, it is important to preserve
 the parent-to-child relationships in the XML lineage. For example,
 one may want to map a particular pitch back to the inning in which
 it was thrown. Using the \code{add\_key} function, the relevant value
 of \code{num} for \code{game//inning} observations can be \code{recycle}d
 to its XML descendents.
-
+%
 \begin{Schunk}
 \begin{Sinput}
-obswkey <- add_key(obs2, parent="game//inning", recycle="num", key.name="inning")
+obswkey <- add_key(obs2, parent = "game//inning", recycle = "num", key.name = "inning")
 \end{Sinput}
 \begin{Soutput}
 A key for the following children will be generated for the game//inning node:
@@ -508,17 +445,16 @@ game//inning//action
 game//inning//atbat//po
 \end{Soutput}
 \end{Schunk}
-
-
+%
 As it turns out, the \code{away\_team} and \code{home\_team} columns
 are redundant as this information is embeded in the \code{url} column.
 Thus, there is only one other informative attribute on this level
 which is \code{next}. By recycling this value to all of its descendants
 as well, we remove any need to retain a \code{game//inning} table.
-
+%
 \begin{Schunk}
 \begin{Sinput}
-obswkey <- add_key(obswkey, parent="game//inning", recycle="next")
+obswkey <- add_key(obswkey, parent = "game//inning", recycle = "next")
 \end{Sinput}
 \begin{Soutput}
 A key for the following children will be generated for the game//inning node:
@@ -529,15 +465,14 @@ game//inning//action
 game//inning//atbat//po
 \end{Soutput}
 \end{Schunk}
-
-
+%
 It is also imperative that we can identify which \code{atbat} a particular
 \code{pitch}, \code{runner}, and \code{po} belongs to. This can
 be done as follows:
-
+%
 \begin{Schunk}
 \begin{Sinput}
-obswkey <- add_key(obswkey, parent="game//inning//atbat", recycle="num")
+obswkey <- add_key(obswkey, parent = "game//inning//atbat", recycle = "num")
 \end{Sinput}
 \begin{Soutput}
 A key for the following children will be generated for the game//inning//atbat node:
@@ -547,22 +482,20 @@ game//inning//atbat//po
 \end{Soutput}
 \end{Schunk}
 
-
-
 \subsection{Collapsing observations}
 
 Finally, we are in a position to pool together observations that have
-a common name. The \code{collapse\_obs} function achieves this by
-row binding observations together and returning a list of matrices.
-Note that \code{collapse\_obs} does not require that observations
-from the same level to have the same set of variables in order to
-be binded into a common table. In the case where variables are missing,
-\code{NA}s will be used as the value.
-
+a common name. The \code{collapse\_obs} function achieves this by row
+binding observations together and returning a list of matrices.  Note
+that \code{collapse\_obs} does not require observations from the same
+level to have the same set of variables in order to be binded into a
+common table. In the case where variables are missing, \code{NA}s will
+be used as value.
+%
 \begin{Schunk}
 \begin{Sinput}
 tables <- collapse_obs(obswkey) 
-#As mentioned before, we don't need the 'inning' table 
+# As mentioned before, we do not need the 'inning' table 
 tables <- tables[-grep("^game//inning$", names(tables))]      
 table.names <- c("game", "action", "atbat", "pitch", "po", "runner") 
 tables <- setNames(tables, table.names) 
@@ -586,33 +519,30 @@ head(tables[["runner"]])
 \end{Soutput}
 \end{Schunk}
 
+\section[Collecting Gameday data with pitchRx]{Collecting Gameday data with \pkg{pitchRx}}
 
-
-\section{Collecting Gameday data with \pkg{pitchRx}}
-
-The main scraping function in \pkg{pitchRx}, \code{scrape}, can
-be used to easily obtain data from the files listed in table \ref{table:pitchfx}.
-In fact, any combination of these file(s) can be queried using the
-\code{suffix} option. In the example below, the \code{start} and
-\code{end} options are also used so that all available file types
-for June 1st, 2011 are queried.
-
+The main scraping function in \pkg{pitchRx}, \code{scrape}, can be
+used to easily obtain data from the files listed in
+Table~\ref{table:pitchfx}.  In fact, any combination of these file(s)
+can be queried using the \code{suffix} option. In the example below,
+the \code{start} and \code{end} options are also used so that all
+available file types for June 1st, 2011 are queried.
+%
 \begin{Schunk}
 \begin{Sinput}
 library(pitchRx)
 files <- c("inning/inning_all.xml", "inning/inning_hit.xml", 
-		"miniscoreboard.xml", "players.xml")
+  "miniscoreboard.xml", "players.xml")
 dat <- scrape(start = "2011-06-01", end = "2011-06-01", suffix = files)
 \end{Sinput}
 \end{Schunk}
-
-
+%
 The \code{game.ids} option can be used instead of \code{start} and
 \code{end} to obtain an equivalent \code{dat} object. This option
 can be useful if the user wants to query specific games rather than
 all games played over a particular time span. When using this \code{game.ids}
 option, the built-in \code{gids} object, is quite convenient.
-
+%
 \begin{Schunk}
 \begin{Sinput}
 data(gids, package = "pitchRx")
@@ -624,27 +554,21 @@ head(gids11)
 [3] "gid_2011_06_01_chamlb_bosmlb_1" "gid_2011_06_01_clemlb_tormlb_1"
 [5] "gid_2011_06_01_colmlb_lanmlb_1" "gid_2011_06_01_flomlb_arimlb_1"
 \end{Soutput}
-\end{Schunk}
-
-
-\begin{Schunk}
 \begin{Sinput}
 dat <- scrape(game.ids = gids11, suffix = files)
 \end{Sinput}
 \end{Schunk}
-
-
+%
 The object \code{dat} is a list of data frames containing all data
 available for June 1st, 2011 using \code{scrape}. The list names
-match the table names provided in table \ref{table:pitchfx}. For
+match the table names provided in Table~\ref{table:pitchfx}. For
 example, \code{dat\$atbat} is data frame with every at bat on June
 1st, 2011 and \code{dat\$pitch} has information related to the outcome
 of each pitch (including PITCHf/x parameters). Just one day's worth
 of data will exhaust nearly 300MB of memory. Multiply this by 100
 games and this starts to exceed the RAM limitations on most machines.
 For this and other reasons, it is recommended that the user exploits
-\proglang{R}'s database interface and related facilities \citet{DBI}.
-
+R's database interface and related facilities \citep{DBI}.
 
 \section{Storing and querying Gameday data}
 
@@ -656,20 +580,19 @@ append to existing) tables using that connection. If the connection
 fails for some reason, tables will be written as csv files in the
 current working directory. The benefits of using the \code{connect}
 argument includes improved virtual memory management which can greatly
-reduce run time. \code{connect}will support a MySQL connection, but
-creating a SQLite database is quite easy with \pkg{dplyr} \citet{dplyr}. 
-
+reduce run time. \code{connect} will support a MySQL connection, but
+creating a SQLite database is quite easy with \CRANpkg{dplyr} \citep{dplyr}. 
+%
 \begin{Schunk}
 \begin{Sinput}
 library(dplyr)
 my_db <- src_sqlite("GamedayDB.sqlite3", create = TRUE)
-#Collect and store all PITCHf/x data from 2008 to 2013
+# Collect and store all PITCHf/x data from 2008 to 2013
 scrape(start = "2008-01-01", end = "2014-01-01", 
-	suffix = "inning/inning_all.xml", connect = my_db$con)
+  suffix = "inning/inning_all.xml", connect = my_db$con)
 \end{Sinput}
 \end{Schunk}
-
-
+%
 Later on, in the PITCHf/x animations, four-seam and cut fastballs
 thrown by Mariano Rivera and Phil Hughes during the 2011 season are
 used to demonstrate PITCHf/x animations. In order to obtain such a
@@ -678,7 +601,7 @@ field in the \code{pitch} table, values of the \code{des} field
 in the \code{atbat} table, and the \code{url} field in both tables.
 Thus, to speed the time to execute such a query, one should create
 an index on these three fields.
-
+%
 \begin{Schunk}
 \begin{Sinput}
 dbSendQuery(my_db$con, "CREATE INDEX url_atbat ON atbat(url)") 
@@ -687,44 +610,40 @@ dbSendQuery(my_db$con, "CREATE INDEX pitcher_index ON atbat(pitcher_name)")
 dbSendQuery(my_db$con, "CREATE INDEX des_index ON pitch(des)")
 \end{Sinput}
 \end{Schunk}
-
-
-Although our desired query could be expressed entirely in SQL, \pkg{dplyr}'s
-grammar for data manipulation (which is database agnostic) can be
-help simply the task. First, create \code{pitch11} and \code{atbat11}
-which are \emph{representations} of 2011 data in \code{my\_db}.
-That is, \code{pitch11} does not contain actual data from every pitch
-thrown during 2011 into memory, but is a portrayal of the relevant
-data sitting in \code{my\_db}.
-
+%
+Although our desired query could be expressed entirely in SQL,
+\pkg{dplyr}'s grammar for data manipulation (which is database
+agnostic) can help to simplify the task. First, create \code{pitch11}
+and \code{atbat11} which are \emph{representations} of 2011 data in
+\code{my\_db}.  That is, \code{pitch11} does not contain actual data
+from every pitch thrown during 2011 into memory, but is a portrayal of
+the relevant data sitting in \code{my\_db}.
+%
 \begin{Schunk}
 \begin{Sinput}
 pitch11 <- tbl(my_db, sql("SELECT * FROM pitch WHERE pitch.url LIKE '%year_2011%'"))
 atbat11 <- tbl(my_db, sql("SELECT * FROM atbat WHERE atbat.url LIKE '%year_2011%'"))
 \end{Sinput}
 \end{Schunk}
-
-
+%
 Next, \code{filter} the \code{atbat11} table to restrict to at bats
 in 2011 where either Rivera or Hughes was the pitcher. Then \code{filter}
 the \code{pitch11} table to include only four-seam (FF) and cut (FC)
 fastballs from 2011. By taking an \code{inner\_join} of these two
 filtered tables, we are left with one table representing the data
 of interest. Lastly, \code{collect} the resulting database query
-in order to bring the actual data into the \proglang{R} session.
-
+in order to bring the actual data into the R session.
+%
 \begin{Schunk}
 \begin{Sinput}
-bats <- filter(atbat11, pitcher_name == "Mariano Rivera" | pitcher_name == "Phil Hughes")
+bats <- filter(atbat11, 
+  pitcher_name == "Mariano Rivera" | pitcher_name == "Phil Hughes")
 FBs <- filter(pitch11, pitch_type == "FF" | pitch_type == "FC")
 pitches <- collect(inner_join(FBs, bats))
 \end{Sinput}
 \end{Schunk}
 
-
-
 \section{Visualizing PITCHf/x}
-
 
 \subsection{Strike-zone plots and umpire bias}
 
@@ -734,7 +653,7 @@ baseballs as they cross home plate. The term strike-zone plot is used
 here to refer to both pitch \emph{density} and event \emph{probability}
 plots. Thanks to their nice interpretation, event probability plots
 can address much more interesting questions. To demonstrate, all available
-pitches from 2008 to 2013 were obtained using \code{scrapeFX}. Strike-zone
+pitches from 2008 to 2013 were obtained using \code{scrape}. Strike-zone
 plots of this data are used to explore the strike-zone and also address
 whether umpires are biased toward home pitchers.
 
@@ -749,7 +668,7 @@ pitch, but we can condition on the umpire making a decision by limiting
 to the following two cases. A \dfn{called strike} is an outcome of
 a pitch where the batter does not swing and the umpire declares the
 pitch a strike (which is a favorable outcome for the pitcher). A \dfn{ball}
-is another outcome where the batter doesn't swing and the umpire declares
+is another outcome where the batter does not swing and the umpire declares
 the pitch a ball (which is a favorable outcome for the batter). Data
 from every called strike and ball from 2008 to 2013 is saved as a
 data frame named \code{decisions}. The following sections use this
@@ -757,40 +676,36 @@ data to showcase \code{strikeFX}'s capability to generate frequency
 and probability plots while providing evidence for our umpire bias
 hypothesis.
 
-
 \subsubsection{Density plots}
 
 The \code{decisions} data frame contains data on over 2.5 million
 pitches thrown from 2008 to 2013. About a third of them are called
-strikes and two-thirds balls. Figure \ref{fig:STRIKES} shows the
+strikes and two-thirds balls. Figure~\ref{fig:STRIKES} shows the
 density of all called strikes. Clearly, most called strikes occur
 on the outer region of the strike-zone. Many factors could contribute
-to this phenomenon; which we won't investigate here.
-
+to this phenomenon; which we will not investigate here.
+%
 \begin{Schunk}
 \begin{Sinput}
 decisions$strike <- as.numeric(decisions$des %in% "Called Strike")
 strikes <- subset(decisions, strike == 1)
-strikeFX(strikes, geom="tile", layer=facet_grid(.~stand, labeller = label_both))
+strikeFX(strikes, geom = "tile", layer = facet_grid(. ~ stand, labeller = label_both))
 \end{Sinput}
 \end{Schunk}
 
-
 \begin{figure}[h]
-\centerline{\includegraphics[scale=.75]{strikes.png}}
-
+\centerline{\includegraphics[scale = .75]{strikes.png}}
 \caption{\label{fig:STRIKES} Density of called strikes for right-handed batters
 and left-handed batters (from 2008 to 2013).}
 \end{figure}
 
-
-Figure \ref{fig:STRIKES} shows one static rectangle (or strike-zone)
+Figure~\ref{fig:STRIKES} shows one static rectangle (or strike-zone)
 per plot automatically generated by \code{strikeFX}. The definition
 of the strike-zone is notoriously ambiguous. As a result, the boundaries
 of the strike-zone may be noticeably different in some situations.
 However, we can achieve a fairly accurate representation of strike-zones
-using a rectangle defined by batters' average height and stance \citet{Strikezones}.
-As figure \ref{fig:strike-probs} reinforces, batter stance makes
+using a rectangle defined by batters' average height and stance \citep{Strikezones}.
+As Figure~\ref{fig:strike-probs} reinforces, batter stance makes
 an important difference since the strike-zone seems to be horizontally
 shifted away from the batter. The batter's height is also important
 since the strike-zone is classically defined as approximately between
@@ -799,21 +714,20 @@ the batter's knees and armpits.
 Figure \ref{fig:STRIKES} has is one strike-zone per plot since the
 \code{layer} option contains a \pkg{ggplot2} argument that facets
 according to batter stance. Facet layers are a powerful tool for analyzing
-PITCHf/x because they help produce quick and insightful comparisons.
+PITCHf/x data because they help produce quick and insightful comparisons.
 In addition to using the \code{layer} option, one can add layers
 to a graphic returned by \code{strikeFX} using \pkg{ggplot2} arithmetic.
-It is also worth pointing out that figure \ref{fig:STRIKES} could
+It is also worth pointing out that Figure~\ref{fig:STRIKES} could
 have been created without introducing the \code{strikes} data frame
 by using the \code{density1} and \code{density2} options. 
-
+%
 \begin{Schunk}
 \begin{Sinput}
-strikeFX(decisions, geom="tile", density1=list(des="Called Strike"), 
-	density2=list(des="Called Strike"))+facet_grid(.~stand) 
+strikeFX(decisions, geom = "tile", density1 = list(des = "Called Strike"), 
+  density2 = list(des = "Called Strike")) + facet_grid(. ~ stand) 
 \end{Sinput}
 \end{Schunk}
-
-
+%
 In general, when \code{density1} and \code{density2} are identical,
 the result is equivalent to subsetting the data frame appropriately
 beforehand. More importantly, by specifying \emph{different} values
@@ -822,38 +736,34 @@ easily generated. In this case, a grid of density estimates for \code{density2}
 are subtracted from the corresponding grid of density estimates for
 \code{density1}. Note that the default \code{NULL} value for either
 density option infers that the entire data set defines the relevant
-density. Thus, if \code{density2} was \code{NULL} (when \code{density1=list(des='Called Strike')}),
+density. Thus, if \code{density2} was \code{NULL} (when \code{density1 = list(des = 'Called Strike')}),
 we would obtain the density of called strikes minus the density of
-\emph{both} called strikes and balls. In figure \ref{fig:strikesVSballs},
+\emph{both} called strikes and balls. In Figure~\ref{fig:strikesVSballs},
 we define \code{density1} as called strikes and define \code{density2}
 as balls. As expected, we see positive density values (in blue) inside
 the strike-zone and negative density values (in red) outside of the
 strike-zone. 
-
+%
 \begin{Schunk}
 \begin{Sinput}
-strikeFX(decisions, geom="tile", density1=list(des="Called Strike"), 
-	density2=list(des="Ball"), layer=facet_grid(.~stand, labeller = label_both)) 
+strikeFX(decisions, geom = "tile", density1 = list(des = "Called Strike"), 
+  density2 = list(des = "Ball"), layer = facet_grid(. ~ stand, labeller = label_both)) 
 \end{Sinput}
 \end{Schunk}
 
-
 \begin{figure}[h]
-\centerline{\includegraphics[scale=.75]{strikesVSballs.png}}
-
+\centerline{\includegraphics[scale = .75]{strikesVSballs.png}}
 \caption{\label{fig:strikesVSballs} Density of called strikes minus density
 of balls for both right-handed batters and left-handed batters (from
 2008 to 2013). The blue region indicates a higher frequency of called
 strikes and the red region indicates a higher frequency of balls.}
 \end{figure}
 
-
 These density plots are helpful for visualizing the observed frequency
-of events; however, they aren't very useful for addressing our umpire
+of events; however, they are not very useful for addressing our umpire
 bias hypothesis. Instead of looking simply at the \emph{density},
 we want to model the \emph{probability} of a strike called at each
 coordinate given the umpire has to make a decision. 
-
 
 \subsubsection{Probabilistic plots}
 
@@ -861,29 +771,28 @@ There are many ways to approach probabilistic modeling over a two
 dimensional spatial region. Since this data is binomial (each pitch
 is either a called strike or ball), generalized additive models (GAMs)
 are perhaps most appropriate for modeling the probability of a certain
-event at each coordinate \citet{loess}. There are numerous \proglang{R}
+event at each coordinate \citep{loess}. There are numerous R
 package implementations of GAMs, but the \code{bam} function from
-the \pkg{mgcv} package has several desirable properties \citet{mgcv}.
+the \pkg{mgcv} package has several desirable properties \citep{mgcv}.
 Most importantly, the smoothing parameter can be estimated using several
 different methods. In order to have a reasonable estimate of the smooth
 2D surface, GAMs require fairly large amount of observations. As a
-result, run time can be an issue - especially when modeling 2.5 million
+result, run time can be an issue -- especially when modeling 2.5 million
 observations! Thankfully, the \code{bam} function has a \code{cluster}
 option which allows one to distribute computations across multiple
-cores using the \pkg{parallel} package \citet{R}.
-
+cores using the \pkg{parallel} package.
+%
 \begin{Schunk}
 \begin{Sinput}
 library(parallel) 
-cl <- makeCluster(detectCores()-1)
+cl <- makeCluster(detectCores() - 1)
 library(mgcv) 
 m <- bam(strike ~ interaction(stand, p_throws, inning_side) +                
-			s(px, pz, by=interaction(stand, p_throws, inning_side)),              
-			data=decisions, family = binomial(link='logit'), cluster=cl)
+  s(px, pz, by = interaction(stand, p_throws, inning_side)),              
+  data = decisions, family = binomial(link = 'logit'), cluster = cl)
 \end{Sinput}
 \end{Schunk}
-
-
+%
 This formula models the probability of a strike as a function of the
 batter's stance, the pitcher's throwing arm, and the side of the inning.
 Since home pitchers always pitch during the top of the inning, \code{inning\_side}
@@ -895,55 +804,52 @@ and \code{pz}. This model may not be optimal for explaining the probability
 of a called strike, but it serves as a nice example to demonstrate
 different options for visualizing these surfaces using \code{strikeFX}. 
 
-The \code{gamObject}, \code{m}, contains a lot of information which
-\code{strikeFX} uses in conjunction with any existing facet commands
-to infer which surfaces should be plotted. In particular, the \code{var.summary}
-value of \code{m} is used to identify the covariates as well as what
-value should be used in case any have to be conditioned upon. In our
-case, the majority of \code{decisions} are from right-handed pitchers
-and the top of the inning. Thus, the default conditioning values are
-\code{"top"} for \code{inning\_side} and \code{"R"} for \code{p\_throws}.
-If different conditioning values are desired, \code{var.summary}
-can be modified accordingly. To demonstrate, figure \ref{fig:strike-probs}
-shows 2 of the 8 possible surfaces that correspond to a right-handed
-\emph{away} pitcher.
-
+The object returned by \code{bam}, \code{m}, contains a lot of
+information which \code{strikeFX} uses in conjunction with any
+existing facet commands to infer which surfaces should be plotted. In
+particular, the \code{var.summary} value of \code{m} is used to
+identify the covariates as well as what values should be used in case
+any have to be conditioned upon. In our case, the majority of
+\code{decisions} are from right-handed pitchers and the top of the
+inning. Thus, the default conditioning values are \code{"top"} for
+\code{inning\_side} and \code{"R"} for \code{p\_throws}.  If different
+conditioning values are desired, \code{var.summary} can be modified
+accordingly. To demonstrate, Figure~\ref{fig:strike-probs} shows 2 of
+the 8 possible surfaces that correspond to a right-handed \emph{away}
+pitcher.
+%
 \begin{Schunk}
 \begin{Sinput}
-away <- list(inning_side = factor("bottom", levels=c("top", "bottom")))
+away <- list(inning_side = factor("bottom", levels = c("top", "bottom")))
 m$var.summary <- modifyList(m$var.summary, away)
-strikeFX(decisions, model=m, layer=facet_grid(.~stand, labeller = label_both))
+strikeFX(decisions, model = m, layer = facet_grid(. ~ stand, labeller = label_both))
 \end{Sinput}
 \end{Schunk}
 
-
 \begin{figure}[h]
-\centerline{\includegraphics[scale=.75]{prob-strike.png}}
-
+\centerline{\includegraphics[scale = .75]{prob-strike.png}}
 \caption{\label{fig:strike-probs}Probability that a right-handed away pitcher
 receives a called strike (provided the umpire has to make a decision).
 Plots are faceted by the handedness of the batter.}
 \end{figure}
 
-
 Using the same intuition exploited earlier to obtain differenced density
 plots, we can easily obtain differenced probability plots. To obtain
-figure \ref{fig:diff-probs}, we simply add \code{p\_throws} as another
+Figure~\ref{fig:diff-probs}, we simply add \code{p\_throws} as another
 facet variable and \code{inning\_side} as a differencing variable.
 In this case, conditioning values do not matter since every one of
-the 8 surfaces are required in order to produce figure \ref{fig:diff-probs}.
-
+the 8 surfaces are required in order to produce Figure~\ref{fig:diff-probs}.
+%
 \begin{Schunk}
 \begin{Sinput}
-strikeFX(decisions, model=m, layer=facet_grid(p_throws~stand, labeller = label_both),
-		density1=list(inning_side="top"), density2=list(inning_side="bottom"))
+strikeFX(decisions, model = m, layer = facet_grid(p_throws ~ stand, 
+  labeller = label_both), density1 = list(inning_side = "top"), 
+  density2 = list(inning_side = "bottom"))
 \end{Sinput}
 \end{Schunk}
 
-
 \begin{figure}[h]
-\centerline{\includegraphics[scale=.75]{prob-diffs.png}}
-
+\centerline{\includegraphics[scale = .75]{prob-diffs.png}}
 \caption{\label{fig:diff-probs}Difference between home and away pitchers in
 the probability of a strike (provided the umpire has to make a decision).
 The blue regions indicate a higher probability of a strike for home
@@ -952,15 +858,14 @@ for away pitchers. Plots are faceted by the handedness of both the
 pitcher and the batter.}
 \end{figure}
 
-
-The four different plots in figure \ref{fig:diff-probs} represent
+The four different plots in Figure~\ref{fig:diff-probs} represent
 the four different combination of values between \code{p\_throws}
 and \code{stand}. In general, provided that a pitcher throws to a
 batter in the blue region, the pitch is more likely to be called a
 strike if the pitcher is on their home turf. Interestingly, there
 is a well-defined blue elliptical band around the boundaries of the
 typical strike-zone. Thus, home pitchers are more likely to receive
-a favorable call - especially when the classification of the pitch
+a favorable call -- especially when the classification of the pitch
 is in question. In some situations, the home pitcher has up to a 6
 percent higher probability of receiving a called strike than an away
 pitcher. The subtle differences in spatial patterns across the different
@@ -977,14 +882,13 @@ In fact, one can explore and compare the probabilistic structure of
 any well-defined event over a strike-zone region (for example, the
 probability a batter reaches base) using a similar approach. 
 
-
 \subsection{2D animation}
 
 \code{animateFX} provides convenient and flexible functionality for
 animating the trajectory of any desired set of pitches. For demonstration
 purposes, this section animates every four-seam and cut fastball thrown
 by Mariano Rivera and Phil Hughes during the 2011 season. These pitches
-provide a good example of how facets plays an important role in extracting
+provide a good example of how facets play an important role in extracting
 new insights. Similar methods can be used to analyze any MLB player
 (or combination of players) in greater detail.
 
@@ -1000,39 +904,37 @@ reached home plate. During an interactive session, \code{animateFX}
 produces a series of plots that may not viewed easily. One option
 available to the user is to wrap \code{animation::saveHTML} around
 \code{animateFX} to view the animation in a browser with proper looping
-controls \citet{animation}.
+controls \citep{animation}.
 
 To reduce the time and thinking required to produce these animations,
 \code{animateFX} has default settings for the geometry, color, opacity
 and size associated with each plot. Any of these assumptions can be
-altered - except for the point geometry. In order for animations to
+altered -- except for the point geometry. In order for animations to
 work, a data frame with the appropriately named PITCHf/x parameters
 (that is, x0, y0, z0, vx0, vy0, vz0, ax0, ay0 and az0) is required.
-In figure \ref{fig:animate1}, the data frame \code{pitches} with
+In Figure~\ref{fig:animate1}, the data frame \code{pitches} with
 data on every four-seam and cut fastball thrown by Rivera and Hughes
 during the 2011 season is used.
 
-\begin{figure}[h]
+\begin{figure}[h!]
 \begin{Schunk}
 \begin{Sinput}
-animateFX(pitches, layer=list(coord_equal(), theme_bw(),
-	facet_grid(pitcher_name~stand, labeller = label_both)))
+animateFX(pitches, layer = list(coord_equal(), theme_bw(),
+  facet_grid(pitcher_name ~ stand, labeller = label_both)))
 \end{Sinput}
-
-\animategraphics[width=1.05\textwidth,controls,loop,autoplay]{20}{figure/all}{1}{41}\end{Schunk}
-
-
-\caption{\label{fig:animate1}Animation of every four-seam and cutting fastballs
-thrown by NY Yankee pitchers Mariano Rivera and Phil Hughes during
-the 2011 season. Pitches are faceted by pitcher and batting stance.
-For instance, the top left plot portrays pitches thrown by Rivera
-to left-handed batters. Animations are intentionally slower than real-time
-for visual recognition and should be viewed within \protect\href{http://get.adobe.com/reader/}{Abode Reader}.
-\citet{knitr}}
+\animategraphics[width = 1.05\textwidth,controls,loop,autoplay]{20}{figure/all}{1}{41}\end{Schunk}
+\caption{\label{fig:animate1}Animation of every four-seam and cutting
+  fastballs thrown by NY Yankee pitchers Mariano Rivera and Phil
+  Hughes during the 2011 season. Pitches are faceted by pitcher and
+  batting stance.  For instance, the top left plot portrays pitches
+  thrown by Rivera to left-handed batters. Animations are
+  intentionally slower than real-time for visual recognition and
+  should be viewed within
+  \protect\href{http://get.adobe.com/reader/}{Adobe Reader}
+  \citep{knitr}.}
 \end{figure}
 
-
-The upper right-hand plot of figure \ref{fig:animate1} (Rivera throwing
+The upper right-hand plot of Figure~\ref{fig:animate1} (Rivera throwing
 to right-handed batters) reveals the clearest pattern in flight trajectories.
 Around the point of release, Rivera's two pitch types are hard to
 distinguish. However, after a certain point, there is a very different
@@ -1047,7 +949,7 @@ Clearly, this presents an advantage for the pitcher since they can
 use deception to reduce batter's ability to predict where the ball
 will cross home plate. This deception factor combined with Rivera's
 ability to locate his pitches explain his accolades as one of the
-greatest pitchers of all time \citet{NYT}.
+greatest pitchers of all time \citep{NYT}.
 
 Although we see a clear pattern in Rivera's pitches, MLB pitchers
 are hardly ever that predictable. Animating that many pitches for
@@ -1057,18 +959,17 @@ we may still want to obtain an indication of pitch trajectory over
 a set of many pitches. A way to achieve this is to average over the
 PITCHf/x parameters to produce an overall sense of pitch type behavior
 (via the \code{avg.by} option). Note that the facet variables are
-automatically considered indexing variables. That is, in figure \ref{fig:animate2},
+automatically considered indexing variables. That is, in Figure~\ref{fig:animate2},
 there are eight 'average' pitches since there are two pitch types,
 two pitchers, and two types of batting stance. 
-\begin{figure}[h]
+\begin{figure}[h!]
 \begin{Schunk}
 \begin{Sinput}
-animateFX(pitches, avg.by="pitch_types", layer=list(coord_equal(), theme_bw(),
-	facet_grid(pitcher_name~stand, labeller = label_both)))
+animateFX(pitches, avg.by = "pitch_types", layer = list(coord_equal(), theme_bw(),
+  facet_grid(pitcher_name ~ stand, labeller = label_both)))
 \end{Sinput}
 
-\animategraphics[width=1.05\textwidth,controls,loop,autoplay]{20}{figure/avg}{1}{40}\end{Schunk}
-
+\animategraphics[width = 1.05\textwidth,controls,loop,autoplay]{20}{figure/avg}{1}{40}\end{Schunk}
 
 \caption{\label{fig:animate2}Animation of 'average' four-seam and cutting
 fastballs thrown by NY Yankee pitchers Mariano Rivera and Phil Hughes
@@ -1077,36 +978,33 @@ type, pitcher and batting stance. For instance, the bottom right plot
 portrays an ``average four-seam'' and ``average cutter'' thrown
 by Hughes to right-handed batters. Animations are intentionally slower
 than real-time for visual recognition and should be viewed within
-\protect\href{http://get.adobe.com/reader/}{Abode Reader}.}
+\protect\href{http://get.adobe.com/reader/}{Adobe Reader}.}
 \end{figure}
-
-
 
 \subsection{Interactive 3D graphics}
 
 \pkg{rgl} is an R package that utilizes OpenGL for graphics rendering
-\citet{rgl}. \code{interactiveFX} utilizes \pkg{rgl} functionality
-to reproduce flight paths on an interactive 3D platform. Figure \ref{fig:rgl}
+\citep{rgl}. \code{interactiveFX} utilizes \pkg{rgl} functionality
+to reproduce flight paths on an interactive 3D platform. Figure~\ref{fig:rgl}
 has two static pictures of Mariano Rivera's 2011 fastballs on this
 interactive platform. This is great for gaining new perspectives on
 a certain set of pitches, since the trajectories can be viewed from
-any angle. Figure \ref{fig:rgl} showcases the difference in trajectory
+any angle. Figure~\ref{fig:rgl} showcases the difference in trajectory
 between Rivera's pitch types.
-
+%
 \begin{Schunk}
 \begin{Sinput}
 Rivera <- subset(pitches, pitcher_name == "Mariano Rivera")
-interactiveFX(Rivera, avg.by="pitch_types")
+interactiveFX(Rivera, avg.by = "pitch_types")
 \end{Sinput}
 \end{Schunk}
 
-
 \begin{figure}[h]
 \begin{minipage}[t]{0.45\textwidth}%
-\centerline{\includegraphics[scale=.45]{rgl_b.png}}%
+\centerline{\includegraphics[scale = .45]{rgl_b.png}}%
 \end{minipage}\hspace*{\fill}%
 \begin{minipage}[t]{0.45\textwidth}%
-\centerline{\includegraphics[scale=.45]{rgl_a.png}}%
+\centerline{\includegraphics[scale = .45]{rgl_a.png}}%
 \end{minipage}
 
 \caption{3D scatterplot of pitches from Rivera. Pitches are plotted every one-hundredth
@@ -1116,14 +1014,12 @@ and the right hand plot takes a viewpoint near the umpire. Note these
 are static pictures of an interactive object. \label{fig:rgl}}
 \end{figure}
 
-
-
 \section{Conclusion}
 
 \pkg{pitchRx} utilizes \pkg{XML2R}'s convenient framework for manipulating
 XML content in order to provide easy access to PITCHf/x and related
 Gameday data. \pkg{pitchRx} removes access barriers which allows
-the average \proglang{R} user and baseball fan to spend their valuable
+the average R user and baseball fan to spend their valuable
 time analyzing Gameday's enormous source of baseball information.
 \pkg{pitchRx} also provides a suite of functions that greatly reduce
 the amount of work involved to create popular PITCHf/x graphics. For
@@ -1131,18 +1027,13 @@ those interested in obtaining other XML data, \pkg{pitchRx} serves
 as a nice example of leveraging \pkg{XML2R} to quickly assemble custom
 XML data collection mechanisms.
 
-
 \section{Acknowledgements}
 
 Many thanks to my major professor, Dr. Heike Hofmann, for her direction
 and support throughout this project. Thanks also to the anonymous
 reviewers for helpful feedback.
 
-
-
-\bibliographystyle{abbrvnat}
 \bibliography{sievert}
-
 
 \address{Carson Sievert\\
 Department of Statistics\\
@@ -1150,4 +1041,6 @@ Iowa State University}\\
 \email{sievert@iastate.edu}
 
 \end{article}
-%\end{document}
+
+
+
